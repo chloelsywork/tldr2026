@@ -174,13 +174,25 @@ const PLAYER_NAMES = [
 const BASE_NW = 100000;
 const FACIL_PASS = "tldr2026";
 
-// ─── STORAGE (localStorage — works on any deployed React app) ────────────────
+// ─── STORAGE (Firebase Realtime Database) ────────────────────────────────────
+const FB_URL = "https://tldr2026-10dae-default-rtdb.asia-southeast1.firebasedatabase.app";
+
 async function sGet(key) {
-  try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
-  catch { return null; }
+  try {
+    const res = await fetch(`${FB_URL}/${key}.json`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
 }
+
 async function sSet(key, val) {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}  
+  try {
+    await fetch(`${FB_URL}/${key}.json`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(val)
+    });
+  } catch {}
 }
 
 // ─── COMPUTE NET WORTH ────────────────────────────────────────────────────────
