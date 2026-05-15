@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { SCENE_SVGS } from "./scenes.js";
 
 // ─── SCENARIOS ───────────────────────────────────────────────────────────────
 const SCENARIOS = [
@@ -742,12 +741,7 @@ export default function App() {
         </div>
 
         {/* Scenario card */}
-        <div style={{...card, padding:"0 0 22px"}}>
-          {/* Scene illustration */}
-          {SCENE_SVGS[currentS?.id] && (
-            <div style={{borderRadius:"18px 18px 0 0", overflow:"hidden", marginBottom:16}}
-              dangerouslySetInnerHTML={{__html: SCENE_SVGS[currentS?.id]}} />
-          )}
+        <div style={{...card, padding:"22px 20px"}}>
           <div style={{padding:"0 20px"}}>
           <div style={{display:"flex", alignItems:"center", gap:10, marginBottom:10}}>
             <span style={{fontSize:24}}>{currentS?.emoji}</span>
