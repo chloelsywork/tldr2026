@@ -359,7 +359,7 @@ const SCENE_SVGS = {
     <rect x="62" y="76" width="74" height="5" rx="2" fill="#475569" opacity=".6"/>
     <!-- signature -->
     <path d="M62,95 Q75,85 88,95 Q101,105 114,95" stroke="#4ade80" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <text x="105" y="20" text-anchor="middle" fill="#a5b4fc" font-size="10" font-weight="700" font-family="sans-serif">WILL &amp; LPA</text>
+    <text x="105" y="20" text-anchor="middle" fill="#a5b4fc" font-size="10" font-weight="700" font-family="sans-serif">WILL + LPA</text>
     <!-- family silhouettes -->
     <circle cx="240" cy="45" r="12" fill="#fbbf24"/>
     <rect x="228" y="58" width="24" height="22" rx="3" fill="#3b82f6"/>
@@ -419,7 +419,7 @@ const SCENE_SVGS = {
     <path d="M30,80 L42,90 L54,80" stroke="#fbbf24" stroke-width="1.5" fill="none"/>
     <rect x="60" y="80" width="24" height="16" rx="2" fill="#f87171"/>
     <path d="M60,80 L72,90 L84,80" stroke="#fbbf24" stroke-width="1.5" fill="none"/>
-    <text x="60" y="108" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="sans-serif">angpaos won&apos;t cover it!</text>
+    <text x="60" y="108" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="sans-serif">angpaos won't cover it!</text>
   </svg>`,
 
   S9: `<svg viewBox="0 0 380 130" xmlns="http://www.w3.org/2000/svg">
