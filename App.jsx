@@ -281,9 +281,15 @@ export default function App() {
 
   useEffect(function() {
     if (mode !== "player" || playerNum === null) return;
+    var lastGi = -1;
     function poll() {
       sGet("global_idx").then(function(gi) {
-        if (gi !== null) setLiveGlobalIdx(gi);
+        if (gi !== null && gi !== lastGi) {
+          lastGi = gi;
+          setRevealResult(null);
+          setPendingCi(null);
+          setLiveGlobalIdx(gi);
+        }
       });
       sGet("player_" + playerNum).then(function(pd) {
         if (pd) {
@@ -380,7 +386,9 @@ export default function App() {
     } else {
       setRevealResult(null);
     }
-    await sSet("player_" + playerNum, { password: myDecisions._pw || "", decisions: nd, completed: Array.from(nc) });
+    var savedPd = await sGet("player_" + playerNum);
+    var savedPw = savedPd ? (savedPd.password || "") : "";
+    await sSet("player_" + playerNum, { password: savedPw, decisions: nd, completed: Array.from(nc) });
   }
 
   async function ackAutomatic(scenarioId) {
@@ -389,7 +397,9 @@ export default function App() {
     var nc = new Set(arr);
     setMyCompleted(nc);
     setRevealResult(null);
-    await sSet("player_" + playerNum, { decisions: myDecisions, completed: Array.from(nc) });
+    var ackPd = await sGet("player_" + playerNum);
+    var ackPw = ackPd ? (ackPd.password || "") : "";
+    await sSet("player_" + playerNum, { password: ackPw, decisions: myDecisions, completed: Array.from(nc) });
   }
 
   var currentS   = SCENARIOS[liveGlobalIdx];
@@ -775,11 +785,42 @@ export default function App() {
         </div>
 
         {liveGlobalIdx === SCENARIOS.length - 1 && thisDone && (
-          <div style={Object.assign({}, s.card, {marginTop:"10px", padding:"18px", textAlign:"center"})}>
-            <div style={{fontSize:"30px", marginBottom:"6px"}}>🏁</div>
-            <div style={{color:"#facc15", fontWeight:"900", fontSize:"18px", marginBottom:"4px"}}>Journey Complete!</div>
-            <div style={{fontSize:"36px", fontWeight:"900", color:clr(nwDelta)}}>{fmt(myNW)}</div>
-            <div style={{color:"#64748b", fontSize:"12px", marginTop:"4px"}}>{nwDelta >= 0 ? "+" : ""}{nwDelta.toLocaleString()} from start</div>
+          <div style={Object.assign({}, s.card, {marginTop:"10px", padding:"20px"})}>
+            <div style={{textAlign:"center", marginBottom:"16px"}}>
+              <div style={{fontSize:"30px", marginBottom:"6px"}}>🏁</div>
+              <div style={{color:"#facc15", fontWeight:"900", fontSize:"18px", marginBottom:"4px"}}>Journey Complete!</div>
+              <div style={{fontSize:"40px", fontWeight:"900", color:clr(nwDelta)}}>{fmt(myNW)}</div>
+              <div style={{color:"#64748b", fontSize:"12px", marginTop:"4px"}}>{nwDelta >= 0 ? "+" : ""}{nwDelta.toLocaleString()} from start</div>
+            </div>
+            <div style={{borderTop:"1px solid rgba(255,255,255,0.08)", paddingTop:"14px"}}>
+              <div style={{color:"#64748b", fontSize:"10px", fontWeight:"700", letterSpacing:"1px", marginBottom:"10px"}}>YOUR ASSET BREAKDOWN</div>
+              {(function() {
+                var nav = computeNAV(myDecisions, myCompleted);
+                var rows = [
+                  { label:"Cash", value:nav.cash, color:"#94a3b8" },
+                  { label:"Property", value:nav.property, color:"#4ade80" },
+                  { label:"ETF", value:nav.etf, color:"#a5b4fc" },
+                  { label:"T-Bills", value:nav.tbills, color:"#4ade80" },
+                  { label:"Car", value:nav.car, color:"#facc15" },
+                ];
+                return rows.filter(function(r){return r.value > 0;}).map(function(r) {
+                  return (
+                    <div key={r.label} style={{display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+                      <span style={{color:"#64748b", fontSize:"13px"}}>{r.label}</span>
+                      <span style={{color:r.color, fontWeight:"700", fontSize:"13px"}}>{fmt(r.value)}</span>
+                    </div>
+                  );
+                });
+              })()}
+              <div style={{display:"flex", justifyContent:"space-between", padding:"10px 0 0"}}>
+                <span style={{color:"#f8fafc", fontWeight:"800", fontSize:"14px"}}>Total NAV</span>
+                <span style={{color:clr(computeNAV(myDecisions,myCompleted).nav - BASE_NW), fontWeight:"900", fontSize:"16px"}}>{fmt(computeNAV(myDecisions,myCompleted).nav)}</span>
+              </div>
+              <div style={{display:"flex", justifyContent:"space-between", padding:"4px 0 0"}}>
+                <span style={{color:"#64748b", fontSize:"12px"}}>Insurance</span>
+                <span style={{color:computeNAV(myDecisions,myCompleted).insured?"#4ade80":"#f87171", fontSize:"12px", fontWeight:"700"}}>{computeNAV(myDecisions,myCompleted).insured ? "Protected" : "Not insured"}</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
